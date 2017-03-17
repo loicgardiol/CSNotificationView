@@ -382,7 +382,8 @@
 //Workaround as there is a bug: sometimes, when accessing topLayoutGuide, it will render contentSize of UITableViewControllers to be {0, 0}
 - (CGFloat)topLayoutGuideLengthCalculation
 {
-    CGFloat top = MIN([UIApplication sharedApplication].statusBarFrame.size.height, [UIApplication sharedApplication].statusBarFrame.size.width);
+    // UIApplication sharedApplication is not available in app extensions. So we have to remove that if we want this library to compile for app extensions.
+    CGFloat top = 20.0; //MIN([UIApplication sharedApplication].statusBarFrame.size.height, [UIApplication sharedApplication].statusBarFrame.size.width);
     
     if (self.parentNavigationController && !self.parentNavigationController.navigationBarHidden) {
         
