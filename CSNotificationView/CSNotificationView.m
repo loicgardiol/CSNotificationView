@@ -339,6 +339,10 @@
             if (!visible) {
                 [weakself removeFromSuperview];
             }
+            
+            // Hack to force navigation bar to redraw, otherwise banner color would still be visible in translucency behind the nav bar at the end of the anination
+            self.parentNavigationController.navigationBarHidden = !self.parentNavigationController.navigationBarHidden;
+            self.parentNavigationController.navigationBarHidden = !self.parentNavigationController.navigationBarHidden;
             if (completion) {
                 completion();
             }
@@ -382,6 +386,9 @@
 //Workaround as there is a bug: sometimes, when accessing topLayoutGuide, it will render contentSize of UITableViewControllers to be {0, 0}
 - (CGFloat)topLayoutGuideLengthCalculation
 {
+    if (@available(iOS 11, *)) {
+        return self.parentViewController.view.layoutMargins.top;
+    }
     // UIApplication sharedApplication is not available in app extensions. So we have to remove that if we want this library to compile for app extensions.
     CGFloat top = 20.0; //MIN([UIApplication sharedApplication].statusBarFrame.size.height, [UIApplication sharedApplication].statusBarFrame.size.width);
     
@@ -404,8 +411,8 @@
     CGFloat topLayoutGuideLength = [self topLayoutGuideLengthCalculation];
 
     CGSize transformedSize = CGSizeApplyAffineTransform(viewController.view.frame.size, viewController.view.transform);
-    CGRect displayFrame = CGRectMake(0, 0, fabs(transformedSize.width),
-                                     kCSNotificationViewHeight + topLayoutGuideLength);
+    CGRect displayFrame = CGRectMake(0, topLayoutGuideLength, fabs(transformedSize.width),
+                                     kCSNotificationViewHeight);
     
     return displayFrame;
 }
@@ -417,13 +424,11 @@
     if (!viewController.isViewLoaded) {
         return CGRectZero;
     }
-    
-    CGFloat topLayoutGuideLength = [self topLayoutGuideLengthCalculation];
 
     CGSize transformedSize = CGSizeApplyAffineTransform(viewController.view.frame.size, viewController.view.transform);
-    CGRect offscreenFrame = CGRectMake(0, -kCSNotificationViewHeight - topLayoutGuideLength,
+    CGRect offscreenFrame = CGRectMake(0, -kCSNotificationViewHeight,
                                        fabs(transformedSize.width),
-                                       kCSNotificationViewHeight + topLayoutGuideLength);
+                                       kCSNotificationViewHeight);
     
     return offscreenFrame;
 }
