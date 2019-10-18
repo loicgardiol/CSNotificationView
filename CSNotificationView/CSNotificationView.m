@@ -340,9 +340,6 @@
                 [weakself removeFromSuperview];
             }
             
-            // Hack to force navigation bar to redraw, otherwise banner color would still be visible in translucency behind the nav bar at the end of the anination
-            self.parentNavigationController.navigationBarHidden = !self.parentNavigationController.navigationBarHidden;
-            self.parentNavigationController.navigationBarHidden = !self.parentNavigationController.navigationBarHidden;
             if (completion) {
                 completion();
             }
